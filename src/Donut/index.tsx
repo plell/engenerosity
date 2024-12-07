@@ -67,11 +67,13 @@ export const Donut = () => {
 const white = new Color("#ffffff");
 
 function Sprinkle({ random, color = new Color(), ...props }) {
-  const ref = useRef<typeof Instance | null>(null);
+  // eslint-disable-next-line
+  const ref = useRef<any>(null);
 
   useFrame((state) => {
     const t = state.clock.getElapsedTime() + random * 10000;
     if (ref.current) {
+      
       ref.current.rotation.set(
         Math.cos(t / 4) / 2,
         Math.sin(t / 4) / 2,
