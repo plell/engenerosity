@@ -1,49 +1,95 @@
 import {useRef } from "react";
 import {
   Color,
-  CylinderGeometry,
+  
   Group,
   
+  MathUtils,
+  
   MeshBasicMaterial,
+  
+  MeshNormalMaterial,
+  MeshToonMaterial,
+  
 } from "three";
 
 import { useFrame } from "@react-three/fiber";
 import { normalScale, data } from "./constants";
-import { Instance, Instances, useGLTF } from "@react-three/drei";
+import { Center, Float, Instance, Instances, Stars, Text3D, useGLTF } from "@react-three/drei";
 
-const sprinkleMaterial = new MeshBasicMaterial();
-const sprinkleGeometry = new CylinderGeometry(0.2, 0.2, 1.3);
+const sprinkleMaterial = new MeshNormalMaterial();
+const moneyMaterial = new MeshBasicMaterial({color:'pink'});
 
-useGLTF.preload("./models/donut_less.glb");
+
+useGLTF.preload("./models/sitting_mannequin.glb");
+
+const textOptions = {
+    size: .3,
+		depth: .01,
+		
+		bevelEnabled: true,
+		
+		bevelOffset: 0,
+		bevelSegments: 99
+    
+}
 
 export const Donut = () => {
-  const donut = useGLTF("./models/donut_less.glb");
-
+  const {nodes} = useGLTF("./models/sitting_mannequin.glb");
   const ref = useRef<Group | null>(null);
+  const ref2 = useRef<Group | null>(null);
+  const textRef = useRef<typeof Text3D | null>(null);
   const sprinkleRef = useRef<Group | null>(null);
-  const donutRef = useRef<Group | null>(null);
 
-  useFrame((_, delta) => {
+  const tRef = useRef<typeof Text3D | null>(null);
+  const tRef1 = useRef<typeof Text3D | null>(null);
+  const tRef2 = useRef<typeof Text3D | null>(null);
+
+  useFrame(({ clock }, delta) => {
     if (ref?.current) {
       const newScale = ref.current.scale.lerp(normalScale, 0.2);
       ref.current.scale.set(newScale.x, newScale.y, newScale.z);
-      ref.current.rotation.y -= 0.6 * delta;
+      ref.current.rotation.y -= 0.02 * delta;
     }
     if (sprinkleRef.current) {
       sprinkleRef.current.rotation.y += 0.2 * delta;
       sprinkleRef.current.rotation.z += 0.1 * delta;
     }
+
+    if (ref2.current) {
+      ref2.current.rotation.y -= 0.04 * delta;
+      ref2.current.rotation.z -= 0.1 * delta;
+    }
+    const time = clock.getElapsedTime();
+      
+      // Modulate the scale using the sine function
+      const scale = MathUtils.lerp(1, 2, Math.abs(Math.sin(time/5)));
+      
+      // Apply the scale to the Text3D component
+      if (textRef.current) {
+        textRef.current.scale.set(scale, scale, scale);
+        // textRef.current.depth.set(scale, scale, scale);
+      }
+
+      if (tRef1.current) {
+        // tRef1.current.rotation.y += 0.6 * delta;
+        tRef1.current.position.y = Math.sin(0.6 * time)/10;
+        // textRef.current.depth.set(scale, scale, scale);
+      }
   });
 
   return (
     <>
-      <directionalLight intensity={3} />
-      <hemisphereLight args={["#ffffff", "yellow"]} intensity={2} />
+      <directionalLight intensity={1} />
+      <hemisphereLight args={["blue", "pink"]} intensity={2} />
+
+      <Stars/>
 
       <Instances
-        range={500}
+        range={1000}
         material={sprinkleMaterial}
-        geometry={sprinkleGeometry}
+        scale={2}
+        geometry={nodes?.Object_2?.geometry}
       >
         <group ref={sprinkleRef} position={[0, 0, 0]}>
           {data.map((props, i) => (
@@ -52,13 +98,56 @@ export const Donut = () => {
         </group>
       </Instances>
 
+
+      <Instances
+        range={1000}
+        material={moneyMaterial}
+        scale={4}
+        geometry={nodes?.Object_2?.geometry }
+      >
+        <group ref={ref2} position={[0, 0, 0]}>
+          {data.map((props, i) => (
+            <Sprinkle key={i} {...props} />
+          ))}
+        </group>
+      </Instances>
+
+      
+
       <group ref={ref}>
-        <primitive
-          ref={donutRef}
-          object={donut.scene}
-          scale={1}
-          rotation-x={Math.PI * 0.3}
-        />
+
+        <Center ref={textRef}>
+            <Float speed={1} floatingRange={[-1,1]}>
+                <Text3D 
+                ref={tRef} 
+                position-x={-.55}
+                font={'./fonts/Roboto Black_Regular.json'}
+                {...textOptions}
+                >
+            EN 
+            <meshNormalMaterial />
+          </Text3D>
+          <Text3D  
+          ref={tRef1} 
+          position-x={0}
+                font={'./fonts/Roboto Black_Regular.json'}
+                {...textOptions}
+                >
+            GENDER
+            <meshNormalMaterial/>
+          </Text3D>
+          <Text3D  
+          ref={tRef2} 
+          position-x={1.6}
+                font={'./fonts/Roboto Black_Regular.json'}
+                {...textOptions}
+                >
+             OSITY
+            <meshNormalMaterial />
+          </Text3D>
+          </Float>
+        </Center>
+
       </group>
     </>
   );
