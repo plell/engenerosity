@@ -40,6 +40,8 @@ export const Donut = () => {
   const ref2 = useRef<Group | null>(null);
   const textRef = useRef<typeof Text3D | null>(null);
   const sprinkleRef = useRef<Group | null>(null);
+  
+  const starRef = useRef<typeof Stars | null>(null);
 
   const tRef = useRef<typeof Text3D | null>(null);
   const tRef1 = useRef<typeof Text3D | null>(null);
@@ -52,10 +54,12 @@ export const Donut = () => {
       ref.current.rotation.y -= 0.02 * delta;
     }
     if (sprinkleRef.current) {
-      sprinkleRef.current.rotation.y += 0.2 * delta;
+      sprinkleRef.current.rotation.y += 0.1 * delta;
       sprinkleRef.current.rotation.z += 0.1 * delta;
     }
-
+    if (starRef.current){
+      starRef.current.rotation.y += 0.01 * delta;
+    }
     if (ref2.current) {
       ref2.current.rotation.y -= 0.04 * delta;
       ref2.current.rotation.z -= 0.1 * delta;
@@ -83,12 +87,12 @@ export const Donut = () => {
       <directionalLight intensity={1} />
       <hemisphereLight args={["blue", "pink"]} intensity={2} />
 
-      <Stars/>
+      <Stars ref={starRef}/>
 
       <Instances
         range={1000}
         material={sprinkleMaterial}
-        scale={2}
+        scale={4}
         geometry={nodes?.Object_2?.geometry}
       >
         <group ref={sprinkleRef} position={[0, 0, 0]}>
@@ -117,7 +121,7 @@ export const Donut = () => {
       <group ref={ref}>
 
         <Center ref={textRef}>
-            <Float speed={1} floatingRange={[-1,1]}>
+            <Float speed={1} floatingRange={[-0.5,0.5]}>
                 <Text3D 
                 ref={tRef} 
                 position-x={-.55}
