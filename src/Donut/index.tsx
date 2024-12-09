@@ -90,7 +90,7 @@ export const Donut = () => {
       <Stars ref={starRef}/>
 
       <Instances
-        range={1000}
+        range={500}
         material={sprinkleMaterial}
         scale={4}
         geometry={nodes?.Object_2?.geometry}
@@ -104,7 +104,7 @@ export const Donut = () => {
 
 
       <Instances
-        range={1000}
+        range={500}
         material={moneyMaterial}
         scale={4}
         geometry={nodes?.Object_2?.geometry }
