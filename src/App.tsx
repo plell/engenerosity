@@ -26,8 +26,8 @@ const CameraController = () => {
 
   const properties = useMemo(()=> {
     return{
-    cameraPosition: new Vector3(0,0,80),
-    cameraTarget: new Vector3(0, 0, 0),
+    cameraPosition: new Vector3(0,-60,140),
+    cameraTarget: new Vector3(0, -20, 0),
     cameraNear: 10,
     cameraFar: 2500,
     gamePosition: new Vector3(0, 0, 0),
